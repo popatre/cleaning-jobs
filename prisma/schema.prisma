@@ -12,3 +12,47 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+
+model Company {
+  CompanyID     Int       @id @default(autoincrement())
+  CompanyName   String
+  ContactPerson String
+  ContactEmail  String
+  ContactPhone  String
+  Address       String
+  Jobs           Job[]
+}
+
+model Driver {
+  DriverID    Int     @id @default(autoincrement())
+  FirstName   String
+  LastName    String
+  ContactPhone  String
+  Jobs           Job[]
+}
+
+
+model Job {
+  JobID           Int       @id @default(autoincrement())
+  Company         Company   @relation(fields: [CompanyID], references: [CompanyID])
+  CompanyID       Int
+  Driver          Driver    @relation(fields: [DriverID], references: [DriverID])
+  DriverID        Int
+  JobDescription  String
+  ScheduledDate   DateTime
+  Status          String
+  DateCompleted   DateTime?
+  Tasks           Task[]
+}
+
+
+model Task {
+  TaskID        Int       @id @default(autoincrement())
+  Job          Job       @relation(fields: [JobID], references: [JobID])
+  JobID         Int
+  Task         String
+  Notes         String
+  isComplete    Boolean    @default(false)
+}
