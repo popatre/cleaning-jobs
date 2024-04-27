@@ -1,10 +1,8 @@
 import { handler } from "../../src/functions/handleGetCompanies/handler";
-import getMockAPIGatewayEvent from "../fixtures/mockApiGatewayEvent";
 
 describe("handleGetCompanies", () => {
     test("should get all companies", async () => {
-        const mockEvent = getMockAPIGatewayEvent();
-        const response = await handler(mockEvent);
+        const response = await handler();
         expect(response.statusCode).toBe(200);
 
         const body = JSON.parse(response.body);
