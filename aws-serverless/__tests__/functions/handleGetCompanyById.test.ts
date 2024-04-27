@@ -1,5 +1,14 @@
 import { handler } from "../../src/functions/handleGetCompanyById/handler";
 import getMockAPIGatewayEvent from "../fixtures/mockApiGatewayEvent";
+import seed from "../../db/seeds/seed";
+import db from "../../db/connection";
+import { driverData, companyData } from "../../db/data/test-data/index";
+
+beforeEach(() => {
+    return seed({ driverData, companyData });
+});
+
+afterAll(() => db.$disconnect());
 
 describe("handleGetCompanies", () => {
     test("should get company by id", async () => {

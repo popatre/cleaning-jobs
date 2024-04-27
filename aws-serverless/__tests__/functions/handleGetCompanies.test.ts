@@ -1,4 +1,13 @@
+import seed from "../../db/seeds/seed";
 import { handler } from "../../src/functions/handleGetCompanies/handler";
+import { driverData, companyData } from "../../db/data/test-data/index";
+import db from "../../db/connection";
+
+beforeEach(() => {
+    return seed({ driverData, companyData });
+});
+
+afterAll(() => db.$disconnect());
 
 describe("handleGetCompanies", () => {
     test("should get all companies", async () => {
