@@ -1,10 +1,14 @@
 import seed from "../../db/seeds/seed";
 import { handler } from "../../src/functions/handleGetDrivers/handler";
-import { driverData, companyData } from "../../db/data/test-data/index";
 import db from "../../db/connection";
+import {
+    driverData,
+    companyData,
+    jobData,
+} from "../../db/data/test-data/index";
 
 beforeEach(() => {
-    return seed({ driverData, companyData });
+    return seed({ driverData, companyData, jobData });
 });
 
 afterAll(() => db.$disconnect());

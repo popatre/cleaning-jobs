@@ -2,10 +2,14 @@ import { handler } from "../../src/functions/handleGetDriverById/handler";
 import getMockAPIGatewayEvent from "../fixtures/mockApiGatewayEvent";
 import seed from "../../db/seeds/seed";
 import db from "../../db/connection";
-import { driverData, companyData } from "../../db/data/test-data/index";
+import {
+    driverData,
+    companyData,
+    jobData,
+} from "../../db/data/test-data/index";
 
 beforeEach(() => {
-    return seed({ driverData, companyData });
+    return seed({ driverData, companyData, jobData });
 });
 
 afterAll(() => db.$disconnect());

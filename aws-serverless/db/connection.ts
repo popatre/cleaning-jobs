@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === "production") {
 } else {
     url = process.env.DATABASE_URL || "";
 }
-console.log(url, "****", process.env.NODE_ENV);
+
 const buildClient = () => {
     const prisma = new PrismaClient({ datasources: { db: { url } } });
     return prisma;
