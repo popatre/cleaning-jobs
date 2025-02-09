@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactEventHandler, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,9 +22,25 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-import SignatureCanvas, {
-    ReactSignatureCanvasProps,
-} from "react-signature-canvas";
+import SignatureCanvas from "react-signature-canvas";
+
+type FormData = {
+    producer: string;
+    date: Date;
+    collector: string;
+    services: Record<
+        string,
+        {
+            options: string[];
+            units: number;
+        }
+    >;
+    other: {
+        description: string;
+        units: number;
+    };
+    printName: string;
+};
 
 const serviceItems = [
     {
@@ -65,28 +81,37 @@ const serviceItems = [
     },
 ];
 
-export default function WasteCollectionForm({}) {
-    const [date, setDate] = React.useState<Date | undefined>(new Date());
-
+export default function WasteCollectionForm() {
     const sigPad = useRef<SignatureCanvas>(null);
+    const { control, register, handleSubmit } = useForm<FormData>({
+        defaultValues: {
+            producer: "",
+            date: new Date(),
+            collector: "",
+            services: serviceItems.reduce(
+                (acc, item) => ({
+                    ...acc,
+                    [item.name]: { options: [], units: 0 },
+                }),
+                {}
+            ),
+            other: { description: "", units: 0 },
+            printName: "",
+        },
+    });
 
-    const handleSelect = (day: Date | undefined) => {
-        setDate(day);
-    };
-
-    const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        const sig = handleGetTrimmed();
-        console.log("signature", sig);
-    };
-
-    const handleSigClear = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+    const handleSigClear = () => {
         sigPad.current?.clear();
     };
 
-    const handleGetTrimmed = () => {
-        return sigPad.current?.getTrimmedCanvas().toDataURL("image/png");
+    const onSubmit = (data: FormData) => {
+        const signature = sigPad.current
+            ?.getTrimmedCanvas()
+            .toDataURL("image/png");
+        console.log({
+            ...data,
+            signature,
+        });
     };
 
     return (
@@ -96,57 +121,75 @@ export default function WasteCollectionForm({}) {
                     <CardTitle>Waste Collection Notice</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form className="space-y-6">
+                    <form
+                        className="space-y-6"
+                        onSubmit={handleSubmit(onSubmit)}
+                    >
                         {/* Producer Selection */}
                         <div className="space-y-2">
-                            <Label htmlFor="producer">Producer</Label>
-                            <Select>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select producer" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="producer1">
-                                        Producer 1
-                                    </SelectItem>
-                                    <SelectItem value="producer2">
-                                        Producer 2
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <Label>Producer</Label>
+                            <Controller
+                                name="producer"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select producer" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="producer1">
+                                                Producer 1
+                                            </SelectItem>
+                                            <SelectItem value="producer2">
+                                                Producer 2
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
                         </div>
 
                         {/* Date Picker */}
                         <div className="space-y-2">
                             <Label>Date</Label>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className="w-full justify-start text-left font-normal"
-                                    >
-                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {date
-                                            ? format(date, "PPP")
-                                            : "Select date"}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0">
-                                    <Calendar
-                                        mode="single"
-                                        selected={date}
-                                        onSelect={handleSelect}
-                                        initialFocus
-                                    />
-                                </PopoverContent>
-                            </Popover>
+                            <Controller
+                                name="date"
+                                control={control}
+                                render={({ field }) => (
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                className="w-full justify-start text-left font-normal"
+                                            >
+                                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                                {field.value
+                                                    ? format(field.value, "PPP")
+                                                    : "Select date"}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                )}
+                            />
                         </div>
 
                         {/* Collector Input */}
                         <div className="space-y-2">
-                            <Label htmlFor="collector">Collector</Label>
+                            <Label>Collector</Label>
                             <Input
-                                id="collector"
                                 placeholder="Enter collector name"
+                                {...register("collector")}
                             />
                         </div>
 
@@ -164,14 +207,38 @@ export default function WasteCollectionForm({}) {
                                                 key={option}
                                                 className="flex items-center space-x-2"
                                             >
-                                                <Checkbox
-                                                    id={`${item.name}-${option}`}
+                                                <Controller
+                                                    name={`services.${item.name}.options`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Checkbox
+                                                            checked={field.value.includes(
+                                                                option
+                                                            )}
+                                                            onCheckedChange={(
+                                                                checked
+                                                            ) => {
+                                                                const newValue =
+                                                                    checked
+                                                                        ? [
+                                                                              ...field.value,
+                                                                              option,
+                                                                          ]
+                                                                        : field.value.filter(
+                                                                              (
+                                                                                  v: string
+                                                                              ) =>
+                                                                                  v !==
+                                                                                  option
+                                                                          );
+                                                                field.onChange(
+                                                                    newValue
+                                                                );
+                                                            }}
+                                                        />
+                                                    )}
                                                 />
-                                                <Label
-                                                    htmlFor={`${item.name}-${option}`}
-                                                >
-                                                    {option}
-                                                </Label>
+                                                <Label>{option}</Label>
                                             </div>
                                         ))}
                                     </div>
@@ -181,21 +248,33 @@ export default function WasteCollectionForm({}) {
                                             type="number"
                                             placeholder="0"
                                             className="w-24"
+                                            {...register(
+                                                `services.${item.name}.units`,
+                                                {
+                                                    valueAsNumber: true,
+                                                }
+                                            )}
                                         />
                                     </div>
                                 </div>
                             ))}
 
-                            {/* Other */}
+                            {/* Other Section */}
                             <div className="border p-4 rounded-lg space-y-2">
                                 <Label>Other</Label>
-                                <Input placeholder="Explain other services not listed" />
+                                <Input
+                                    placeholder="Explain other services not listed"
+                                    {...register("other.description")}
+                                />
                                 <div className="mt-2">
                                     <Label>Number of units</Label>
                                     <Input
                                         type="number"
                                         placeholder="0"
                                         className="w-24"
+                                        {...register("other.units", {
+                                            valueAsNumber: true,
+                                        })}
                                     />
                                 </div>
                             </div>
@@ -210,10 +289,11 @@ export default function WasteCollectionForm({}) {
                                     canvasProps={{
                                         width: 238,
                                         height: 200,
-                                        className: "sigCanvas",
+                                        className: "border border-slate-600",
                                     }}
                                 />
                                 <Button
+                                    type="button"
                                     className="w-1/2"
                                     onClick={handleSigClear}
                                 >
@@ -221,16 +301,12 @@ export default function WasteCollectionForm({}) {
                                 </Button>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="printName">Print Name</Label>
-                                <Input id="printName" />
+                                <Label>Print Name</Label>
+                                <Input {...register("printName")} />
                             </div>
                         </div>
 
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            onClick={handleSubmit}
-                        >
+                        <Button type="submit" className="w-full">
                             Submit
                         </Button>
                     </form>
