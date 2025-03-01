@@ -1,7 +1,7 @@
 export const jobData = [
     {
         jobID: 1,
-        companyID: 1,
+        companyID: 111,
         driverID: 1,
         jobDescription: "Empty bins",
         scheduledDate: new Date(2024, 3, 27, 12, 32),
@@ -10,7 +10,7 @@ export const jobData = [
     },
     {
         jobID: 2,
-        companyID: 1,
+        companyID: 111,
         driverID: 2,
         jobDescription: "Empty toilet",
         scheduledDate: new Date(2024, 3, 27, 12, 32),
@@ -19,7 +19,7 @@ export const jobData = [
     },
     {
         jobID: 3,
-        companyID: 2,
+        companyID: 222,
         driverID: 1,
         jobDescription: "Install soap",
         scheduledDate: new Date(2024, 3, 27, 12, 32),
@@ -28,7 +28,7 @@ export const jobData = [
     },
     {
         jobID: 4,
-        companyID: 3,
+        companyID: 333,
         driverID: 3,
         jobDescription: "Remove rubbish",
         scheduledDate: new Date(2024, 3, 27, 12, 32),
