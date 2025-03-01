@@ -45,15 +45,62 @@ model Job {
   scheduledDate   DateTime
   status          String
   dateCompleted   DateTime?
-  tasks           Task[]
+  wasteCollection WasteCollection?
 }
 
 
-model Task {
-  taskID        Int       @id @default(autoincrement())
-  job          Job       @relation(fields: [jobID], references: [jobID])
-  jobID         Int
-  task         String
-  notes         String
-  isComplete    Boolean    @default(false)
+
+
+model WasteCollection {
+  collectionID    Int       @id @default(autoincrement())
+ 
+  companyID       Int
+  driverID        Int
+  job             Job?      @relation(fields: [jobID], references: [jobID])
+  jobID           Int?      @unique // Optional relation to job
+  
+
+  collectionDate  DateTime
+  printName       String
+  signatureData   String?   // Base64 encoded signature
+  
+
+  serviceItems    ServiceItem[]
+  otherServices   OtherService[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model ServiceType {
+  serviceTypeID   Int       @id @default(autoincrement())
+  serviceName     String    @unique
+  possibleOptions String[]  // Array of possible checkbox options
+  
+  serviceItems    ServiceItem[]
+}
+
+model ServiceItem {
+  serviceItemID   Int       @id @default(autoincrement())
+  
+  // Relations
+  collection      WasteCollection @relation(fields: [collectionID], references: [collectionID], onDelete: Cascade)
+  collectionID    Int
+  serviceType     ServiceType @relation(fields: [serviceTypeID], references: [serviceTypeID])
+  serviceTypeID   Int
+  
+  // Service details
+  selectedOptions String[]  // Which options were checked (e.g., "serviced", "cleaned")
+  units           Int       // Number of units
+  
+  @@unique([collectionID, serviceTypeID])
+}
+
+model OtherService {
+  otherServiceID  Int       @id @default(autoincrement())
+  collection      WasteCollection @relation(fields: [collectionID], references: [collectionID], onDelete: Cascade)
+  collectionID    Int
+  
+  description     String
+  units           Int
 }

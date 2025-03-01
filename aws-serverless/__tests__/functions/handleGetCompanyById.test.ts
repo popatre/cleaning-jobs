@@ -6,10 +6,11 @@ import {
     driverData,
     companyData,
     jobData,
+    serviceTypesData,
 } from "../../db/data/test-data/index";
 
 beforeEach(() => {
-    return seed({ driverData, companyData, jobData });
+    return seed({ driverData, companyData, jobData, serviceTypesData });
 });
 
 afterAll(() => db.$disconnect());
