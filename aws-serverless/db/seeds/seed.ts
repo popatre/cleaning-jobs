@@ -1,11 +1,22 @@
 import client from "../connection";
-import { Company, Driver, Job, ServiceType } from "@prisma/client";
+import {
+    Company,
+    Driver,
+    Job,
+    OtherService,
+    ServiceItem,
+    ServiceType,
+    WasteCollection,
+} from "@prisma/client";
 
 type SeedData = {
     companyData: Company[];
     driverData: Driver[];
     jobData: Job[];
     serviceTypesData: ServiceType[];
+    wasteCollectionData: WasteCollection[];
+    serviceItemData: ServiceItem[];
+    otherServiceData: OtherService[];
 };
 
 async function seed({
@@ -13,12 +24,18 @@ async function seed({
     driverData,
     jobData,
     serviceTypesData,
+    otherServiceData,
+    wasteCollectionData,
+    serviceItemData,
 }: SeedData) {
     // Clear existing data
     await client.job.deleteMany();
+    await client.wasteCollection.deleteMany();
     await client.driver.deleteMany();
     await client.company.deleteMany();
     await client.serviceType.deleteMany();
+    await client.otherService.deleteMany();
+    await client.serviceItem.deleteMany();
 
     // Create companies first
     await client.company.createMany({
@@ -38,6 +55,20 @@ async function seed({
     // Create service type/options
     await client.serviceType.createMany({
         data: serviceTypesData,
+    });
+
+    // Create waste collection
+    await client.wasteCollection.createMany({
+        data: wasteCollectionData,
+    });
+    // Create service Item
+    await client.serviceItem.createMany({
+        data: serviceItemData,
+    });
+
+    // Create other service
+    await client.otherService.createMany({
+        data: otherServiceData,
     });
 }
 

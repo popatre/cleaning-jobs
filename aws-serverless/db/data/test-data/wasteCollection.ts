@@ -1,1 +1,35 @@
-export const wasteCollection = [];
+export const wasteCollectionData = [
+    {
+        collectionID: 1,
+        companyID: 111,
+        driverID: 1,
+        jobID: 1,
+        collectionDate: new Date("2024-02-29T08:30:00Z"),
+        printName: "John Doe",
+        signatureData: "base64-signature-data-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        collectionID: 2,
+        companyID: 222,
+        driverID: 1,
+        jobID: 3,
+        collectionDate: new Date("2024-02-28T10:45:00Z"),
+        printName: "Jane Smith",
+        signatureData: "base64-signature-data-2",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        collectionID: 3,
+        companyID: 333,
+        driverID: 2,
+        jobID: 2,
+        collectionDate: new Date("2024-02-27T12:15:00Z"),
+        printName: "Mark Johnson",
+        signatureData: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+];

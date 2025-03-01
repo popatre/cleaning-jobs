@@ -24,6 +24,7 @@ model Company {
   contactPhone  String
   address       String
   jobs           Job[]
+  wasteCollection WasteCollection[]
 }
 
 model Driver {
@@ -32,6 +33,7 @@ model Driver {
   lastName    String
   contactPhone  String
   jobs           Job[]
+  wasteCollection WasteCollection[]
 }
 
 
@@ -54,9 +56,12 @@ model Job {
 model WasteCollection {
   collectionID    Int       @id @default(autoincrement())
  
-  companyID       Int
-  driverID        Int
-  job             Job?      @relation(fields: [jobID], references: [jobID])
+ 
+  company        Company  @relation(fields: [companyID], references: [companyID])
+  companyID      Int
+  driver        Driver   @relation(fields: [driverID], references: [driverID])
+  driverID       Int
+  job           Job?     @relation(fields: [jobID], references: [jobID])
   jobID           Int?      @unique // Optional relation to job
   
 
@@ -77,6 +82,7 @@ model ServiceType {
   serviceName     String    @unique
   possibleOptions String[]  // Array of possible checkbox options
   
+
   serviceItems    ServiceItem[]
 }
 

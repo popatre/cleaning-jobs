@@ -1,1 +1,51 @@
-export const serviceItem = [];
+export const serviceItemData = [
+    {
+        serviceItemID: 6666666,
+        collectionID: 1,
+        serviceTypeID: 4,
+        selectedOptions: ["operation checked"],
+        units: 1,
+    },
+    {
+        serviceItemID: 5555555,
+        collectionID: 1,
+        serviceTypeID: 2,
+        selectedOptions: ["Fragrance"],
+        units: 2,
+    },
+    {
+        serviceItemID: 44444,
+        collectionID: 1,
+        serviceTypeID: 5,
+        selectedOptions: ["cleaned"],
+        units: 4,
+    },
+    {
+        serviceItemID: 1,
+        collectionID: 2,
+        serviceTypeID: 1,
+        selectedOptions: ["serviced"],
+        units: 1,
+    },
+    {
+        serviceItemID: 34445,
+        collectionID: 2,
+        serviceTypeID: 2,
+        selectedOptions: ["Fragrance"],
+        units: 2,
+    },
+    {
+        serviceItemID: 1454,
+        collectionID: 2,
+        serviceTypeID: 3,
+        selectedOptions: ["fluid replenished"],
+        units: 4,
+    },
+    {
+        serviceItemID: 22267,
+        collectionID: 3,
+        serviceTypeID: 1,
+        selectedOptions: ["serviced"],
+        units: 1,
+    },
+];

@@ -3,14 +3,25 @@ import getMockAPIGatewayEvent from "../fixtures/mockApiGatewayEvent";
 import seed from "../../db/seeds/seed";
 import db from "../../db/connection";
 import {
-    driverData,
     companyData,
+    driverData,
     jobData,
     serviceTypesData,
+    otherServiceData,
+    wasteCollectionData,
+    serviceItemData,
 } from "../../db/data/test-data/index";
 
 beforeEach(() => {
-    return seed({ driverData, companyData, jobData, serviceTypesData });
+    return seed({
+        companyData,
+        driverData,
+        jobData,
+        serviceTypesData,
+        otherServiceData,
+        wasteCollectionData,
+        serviceItemData,
+    });
 });
 
 afterAll(() => db.$disconnect());
