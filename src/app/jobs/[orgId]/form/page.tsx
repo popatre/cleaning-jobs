@@ -1,7 +1,7 @@
 "use client";
 
-import React, { ReactEventHandler, useRef } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React, { useRef, useState } from "react";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,8 +21,13 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, PlusCircle, Trash2 } from "lucide-react";
 import SignatureCanvas from "react-signature-canvas";
+
+type OtherServiceItem = {
+    description: string;
+    units: number;
+};
 
 type FormData = {
     producer: string;
@@ -35,10 +40,7 @@ type FormData = {
             units: number;
         }
     >;
-    other: {
-        description: string;
-        units: number;
-    };
+    otherServices: OtherServiceItem[];
     printName: string;
 };
 
@@ -95,9 +97,15 @@ export default function WasteCollectionForm() {
                 }),
                 {}
             ),
-            other: { description: "", units: 0 },
+            otherServices: [{ description: "", units: 0 }],
             printName: "",
         },
+    });
+
+    // Use useFieldArray to manage the dynamic other services array
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "otherServices",
     });
 
     const handleSigClear = () => {
@@ -259,24 +267,73 @@ export default function WasteCollectionForm() {
                                 </div>
                             ))}
 
-                            {/* Other Section */}
-                            <div className="border p-4 rounded-lg space-y-2">
-                                <Label>Other</Label>
-                                <Input
-                                    placeholder="Explain other services not listed"
-                                    {...register("other.description")}
-                                />
-                                <div className="mt-2">
-                                    <Label>Number of units</Label>
-                                    <Input
-                                        type="number"
-                                        placeholder="0"
-                                        className="w-24"
-                                        {...register("other.units", {
-                                            valueAsNumber: true,
-                                        })}
-                                    />
+                            {/* Dynamic Other Services Section */}
+                            <div className="border p-4 rounded-lg space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <Label className="text-lg font-medium">
+                                        Other Services
+                                    </Label>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                            append({
+                                                description: "",
+                                                units: 0,
+                                            })
+                                        }
+                                    >
+                                        <PlusCircle className="h-4 w-4 mr-2" />
+                                        Add Service
+                                    </Button>
                                 </div>
+
+                                {fields.map((field, index) => (
+                                    <div
+                                        key={field.id}
+                                        className="space-y-3 border-b pb-4 last:border-b-0"
+                                    >
+                                        <div className="flex justify-between items-start">
+                                            <Label>
+                                                Other Service {index + 1}
+                                            </Label>
+                                            {fields.length > 1 && (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        remove(index)
+                                                    }
+                                                    className="h-8 w-8 p-0 text-red-500"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            )}
+                                        </div>
+                                        <Input
+                                            placeholder="Explain other service not listed"
+                                            {...register(
+                                                `otherServices.${index}.description`
+                                            )}
+                                        />
+                                        <div>
+                                            <Label>Number of units</Label>
+                                            <Input
+                                                type="number"
+                                                placeholder="0"
+                                                className="w-24"
+                                                {...register(
+                                                    `otherServices.${index}.units`,
+                                                    {
+                                                        valueAsNumber: true,
+                                                    }
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
