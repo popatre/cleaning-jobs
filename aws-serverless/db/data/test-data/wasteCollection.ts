@@ -28,7 +28,7 @@ export const wasteCollectionData = [
         jobID: 2,
         collectionDate: new Date("2024-02-27T12:15:00Z"),
         printName: "Mark Johnson",
-        signatureData: null,
+        signatureData: "base64-signature-data-3",
         createdAt: new Date(),
         updatedAt: new Date(),
     },

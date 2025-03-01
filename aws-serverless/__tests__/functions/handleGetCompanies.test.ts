@@ -35,7 +35,7 @@ describe("handleGetCompanies", () => {
         const body = JSON.parse(response.body);
         expect(body.data.companies).toBeInstanceOf(Array);
         expect(body.data.companies).toHaveLength(3);
-        body.data.companies.forEach((company) => {
+        body.data.companies.forEach((company: any) => {
             expect(company).toMatchObject({
                 companyID: expect.any(Number),
                 companyName: expect.any(String),
